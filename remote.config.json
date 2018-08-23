@@ -1,0 +1,20 @@
+{
+    "Commands": [
+        {
+            "Name": "Echo Message",
+            "Path": "echo",
+            "Args": [
+                "Hello",
+                "World"
+            ]
+        },
+        {
+            "Name": "List Directory Contents",
+            "Path": "ls",
+            "Args": [
+                "-a"
+            ]
+        }
+    ],
+    "Chains": []
+}
