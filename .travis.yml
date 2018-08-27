@@ -1,0 +1,16 @@
+language: go
+sudo: false
+
+go:
+  - "1.x"
+
+before_install:
+  - go get github.com/mitchellh/gox
+
+install: true
+
+script:
+  - gox -os="darwin windows" -arch="amd64" -output="remote.." -verbose
+
+notifications:
+  email: false
