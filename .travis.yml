@@ -10,7 +10,7 @@ before_install:
 install: true
 
 script:
-  - gox -os="darwin windows" -arch="amd64" -output="remote.." -verbose
+  - gox -os="darwin windows" -arch="amd64" -output="remote.{{.OS}}.{{.Arch}}" -verbose
 
 deploy:
   skip_cleanup: true
