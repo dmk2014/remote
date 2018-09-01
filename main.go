@@ -2,12 +2,14 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
+	"strconv"
 )
 
 type Config struct {
@@ -29,14 +31,24 @@ type Chain struct {
 var config Config
 
 func main() {
-	readConfig()
+	var configPath string
+	var port int
 
-	startServer()
+	flags := flag.NewFlagSet("remote", flag.ExitOnError)
+	flags.Usage = printUsage
+	flags.StringVar(&configPath, "config", "remote.config.json", "config file path")
+	flags.IntVar(&port, "port", 5000, "port to bind to")
+
+	if err := flags.Parse(os.Args[1:]); err != nil {
+		printUsage()
+		os.Exit(1)
+	}
+
+	readConfig(configPath)
+	startServer(port)
 }
 
-func readConfig() {
-	path := "remote.config.json"
-
+func readConfig(path string) {
 	file, err := os.Open(path)
 	if os.IsNotExist(err) {
 		log.Fatalf("Config file does not exist at %s", path)
@@ -54,8 +66,8 @@ func readConfig() {
 	}
 }
 
-func startServer() {
-	address := "localhost:5000"
+func startServer(port int) {
+	address := "localhost:" + strconv.Itoa(port)
 
 	http.HandleFunc("/run", func(w http.ResponseWriter, r *http.Request) {
 		name := r.URL.Query().Get("name")
@@ -85,3 +97,39 @@ func startServer() {
 	log.Printf("Remote server listening at http://%s", address)
 	log.Fatal(http.ListenAndServe(address, nil))
 }
+
+func printUsage() {
+	fmt.Fprintf(os.Stderr, helpText)
+}
+
+const helpText = `Usage: remote [options]
+
+  Remote exposes an endpoint to run commands on the host machine.
+
+Options:
+  -config "remote.config.json" Path to configuration file
+  -port 5000                   Port that the server should bind to
+
+Configuration File:
+
+  The configuration file contains an array of commands to expose.
+
+  {
+    "Commands": [
+      {
+        "Name": "command_name",
+          "Path": "echo",
+          "Args": [
+            "Hello",
+            "Remote
+          ]
+      }
+    ]
+  }
+
+Command Execution:
+
+  Execute commands by sending a GET request to /run.
+  http://localhost:5000/run?name=command_name
+
+`
