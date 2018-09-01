@@ -7,13 +7,6 @@
                 "Hello",
                 "World"
             ]
-        },
-        {
-            "Name": "List Directory Contents",
-            "Path": "ls",
-            "Args": [
-                "-a"
-            ]
         }
     ],
     "Chains": []
