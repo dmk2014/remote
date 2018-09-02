@@ -78,6 +78,12 @@ func startServer(host string, port int) {
 }
 
 func runHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.Header().Set("Allow", "GET")
+		w.WriteHeader(405)
+		return
+	}
+
 	name := r.URL.Query().Get("name")
 	var toRun *Command
 
