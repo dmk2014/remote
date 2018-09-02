@@ -94,12 +94,18 @@ func runHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cmd := exec.Command(toRun.Path, toRun.Args...)
-	if err := cmd.Run(); err != nil {
+	if err := cmd.Start(); err != nil {
 		fmt.Fprintf(w, "Error: %s", err.Error())
 		return
 	}
 
-	fmt.Fprintf(w, "Command %s executed successfully.", toRun.Name)
+	go func() {
+		if err := cmd.Wait(); err != nil {
+			log.Printf("Failed to wait for command %s with error %s", toRun.Name, err.Error())
+		}
+	}()
+
+	fmt.Fprintf(w, "Command %s started successfully.", toRun.Name)
 }
 
 func printUsage() {
