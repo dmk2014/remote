@@ -32,11 +32,13 @@ var config Config
 
 func main() {
 	var configPath string
+	var host string
 	var port int
 
 	flags := flag.NewFlagSet("remote", flag.ExitOnError)
 	flags.Usage = printUsage
 	flags.StringVar(&configPath, "config", "remote.config.json", "config file path")
+	flags.StringVar(&host, "host", "localhost", "host to bind to")
 	flags.IntVar(&port, "port", 5000, "port to bind to")
 
 	if err := flags.Parse(os.Args[1:]); err != nil {
@@ -45,7 +47,7 @@ func main() {
 	}
 
 	readConfig(configPath)
-	startServer(port)
+	startServer(host, port)
 }
 
 func readConfig(path string) {
@@ -66,9 +68,7 @@ func readConfig(path string) {
 	}
 }
 
-func startServer(port int) {
-	address := "localhost:" + strconv.Itoa(port)
-
+func startServer(host string, port int) {
 	http.HandleFunc("/run", func(w http.ResponseWriter, r *http.Request) {
 		name := r.URL.Query().Get("name")
 		var toRun *Command
@@ -94,6 +94,7 @@ func startServer(port int) {
 		fmt.Fprintf(w, "Command %s executed successfully.", toRun.Name)
 	})
 
+	address := host + ":" + strconv.Itoa(port)
 	log.Printf("Remote server listening at http://%s", address)
 	log.Fatal(http.ListenAndServe(address, nil))
 }
@@ -108,6 +109,7 @@ const helpText = `Usage: remote [options]
 
 Options:
   -config "remote.config.json" Path to configuration file
+  -host "localhost"            Host that the server should bind to
   -port 5000                   Port that the server should bind to
 
 Configuration File:
