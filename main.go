@@ -69,34 +69,37 @@ func readConfig(path string) {
 }
 
 func startServer(host string, port int) {
-	http.HandleFunc("/run", func(w http.ResponseWriter, r *http.Request) {
-		name := r.URL.Query().Get("name")
-		var toRun *Command
-
-		for _, cmd := range config.Commands {
-			if cmd.Name == name {
-				toRun = &cmd
-				break
-			}
-		}
-
-		if toRun == nil {
-			fmt.Fprintf(w, "Command %s was not found.", name)
-			return
-		}
-
-		cmd := exec.Command(toRun.Path, toRun.Args...)
-		if err := cmd.Run(); err != nil {
-			fmt.Fprintf(w, "Error: %s", err.Error())
-			return
-		}
-
-		fmt.Fprintf(w, "Command %s executed successfully.", toRun.Name)
-	})
-
 	address := host + ":" + strconv.Itoa(port)
+
+	http.HandleFunc("/run", runHandler)
+
 	log.Printf("Remote server listening at http://%s", address)
 	log.Fatal(http.ListenAndServe(address, nil))
+}
+
+func runHandler(w http.ResponseWriter, r *http.Request) {
+	name := r.URL.Query().Get("name")
+	var toRun *Command
+
+	for _, cmd := range config.Commands {
+		if cmd.Name == name {
+			toRun = &cmd
+			break
+		}
+	}
+
+	if toRun == nil {
+		fmt.Fprintf(w, "Command %s was not found.", name)
+		return
+	}
+
+	cmd := exec.Command(toRun.Path, toRun.Args...)
+	if err := cmd.Run(); err != nil {
+		fmt.Fprintf(w, "Error: %s", err.Error())
+		return
+	}
+
+	fmt.Fprintf(w, "Command %s executed successfully.", toRun.Name)
 }
 
 func printUsage() {
