@@ -17,6 +17,19 @@ type Config struct {
 	Chains   []Chain
 }
 
+func (c *Config) GetCommand(name string) *Command {
+	var result *Command
+
+	for _, cmd := range c.Commands {
+		if cmd.Name == name {
+			result = &cmd
+			break
+		}
+	}
+
+	return result
+}
+
 type Command struct {
 	Name string
 	Path string
@@ -97,15 +110,7 @@ func runHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var toRun *Command
-
-	for _, cmd := range config.Commands {
-		if cmd.Name == name {
-			toRun = &cmd
-			break
-		}
-	}
-
+	toRun := config.GetCommand(name)
 	if toRun == nil {
 		fmt.Fprintf(w, "Command %s was not found.", name)
 		return
