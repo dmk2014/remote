@@ -91,6 +91,12 @@ func httpGet(h http.HandlerFunc) http.HandlerFunc {
 
 func runHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
+	if len(name) == 0 {
+		w.WriteHeader(400)
+		w.Write([]byte("Query parameter [name] is required and cannot be empty."))
+		return
+	}
+
 	var toRun *Command
 
 	for _, cmd := range config.Commands {
