@@ -71,19 +71,25 @@ func readConfig(path string) {
 func startServer(host string, port int) {
 	address := host + ":" + strconv.Itoa(port)
 
-	http.HandleFunc("/run", runHandler)
+	http.HandleFunc("/run", httpGet(runHandler))
 
 	log.Printf("Remote server listening at http://%s", address)
 	log.Fatal(http.ListenAndServe(address, nil))
 }
 
-func runHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.Header().Set("Allow", "GET")
-		w.WriteHeader(405)
-		return
-	}
+func httpGet(h http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			w.Header().Set("Allow", "GET")
+			w.WriteHeader(405)
+			return
+		}
 
+		h(w, r)
+	})
+}
+
+func runHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	var toRun *Command
 
