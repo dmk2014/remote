@@ -92,9 +92,9 @@ func startServer(host string, port int) {
 
 func httpGet(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "GET" {
-			w.Header().Set("Allow", "GET")
-			w.WriteHeader(405)
+		if r.Method != http.MethodGet {
+			w.Header().Set("Allow", http.MethodGet)
+			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
 
@@ -105,20 +105,19 @@ func httpGet(h http.HandlerFunc) http.HandlerFunc {
 func runHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	if len(name) == 0 {
-		w.WriteHeader(400)
-		w.Write([]byte("Query parameter [name] is required and cannot be empty."))
+		http.Error(w, "Query parameter [name] is required and cannot be empty.", http.StatusBadRequest)
 		return
 	}
 
 	toRun := config.GetCommand(name)
 	if toRun == nil {
-		fmt.Fprintf(w, "Command %s was not found.", name)
+		http.Error(w, "Specified command was not found.", http.StatusBadRequest)
 		return
 	}
 
 	cmd := exec.Command(toRun.Path, toRun.Args...)
 	if err := cmd.Start(); err != nil {
-		fmt.Fprintf(w, "Error: %s", err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
