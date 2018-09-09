@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"sort"
 	"strconv"
 )
 
@@ -85,6 +86,7 @@ func startServer(host string, port int) {
 	address := host + ":" + strconv.Itoa(port)
 
 	http.HandleFunc("/run", httpGet(runHandler))
+	http.HandleFunc("/list", httpGet(listHandler))
 
 	log.Printf("Remote server listening at http://%s", address)
 	log.Fatal(http.ListenAndServe(address, nil))
@@ -128,6 +130,18 @@ func runHandler(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	fmt.Fprintf(w, "Command %s started successfully.", toRun.Name)
+}
+
+func listHandler(w http.ResponseWriter, r *http.Request) {
+	names := make([]string, 0, len(config.Commands))
+	for _, cmd := range config.Commands {
+		names = append(names, cmd.Name)
+	}
+
+	sort.Strings(names)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(names)
 }
 
 func printUsage() {
