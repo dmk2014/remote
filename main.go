@@ -15,7 +15,6 @@ import (
 
 type Config struct {
 	Commands []Command
-	Chains   []Chain
 }
 
 func (c *Config) GetCommand(name string) *Command {
@@ -35,11 +34,6 @@ type Command struct {
 	Name string
 	Path string
 	Args []string
-}
-
-type Chain struct {
-	Name    string
-	Command []Command
 }
 
 var config Config
