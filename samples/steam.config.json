@@ -1,0 +1,18 @@
+{
+    "Commands": [
+        {
+            "Name": "start-steam",
+            "Path": "C:\\Program Files (x86)\\Steam\\Steam.exe",
+            "Args": [
+                "-bigpicture"
+            ]
+        },
+        {
+            "Name": "stop-steam",
+            "Path": "C:\\Program Files (x86)\\Steam\\Steam.exe",
+            "Args": [
+                "-shutdown"
+            ]
+        }
+    ]
+}
