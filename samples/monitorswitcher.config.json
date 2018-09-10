@@ -1,0 +1,18 @@
+{
+    "Commands": [
+        {
+            "Name": "tv",
+            "Path": "C:\\MonitorSwitcher\\MonitorProfileSwitcher_v0700\\MonitorSwitcher.exe",
+            "Args": [
+                "-load:C:\\MonitorSwitcher\\Profiles\\BigScreen.xml"
+            ]
+        },
+        {
+            "Name": "pc",
+            "Path": "C:\\MonitorSwitcher\\MonitorProfileSwitcher_v0700\\MonitorSwitcher.exe",
+            "Args": [
+                "-load:C:\\MonitorSwitcher\\Profiles\\SmallScreen.xml"
+            ]
+        }
+    ]
+}
