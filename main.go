@@ -81,6 +81,7 @@ func startServer(host string, port int) {
 
 	http.HandleFunc("/run", httpGet(runHandler))
 	http.HandleFunc("/list", httpGet(listHandler))
+	http.HandleFunc("/heartbeat", httpGet(heartbeatHandler))
 
 	log.Printf("Remote server listening at http://%s", address)
 	log.Fatal(http.ListenAndServe(address, nil))
@@ -136,6 +137,10 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(names)
+}
+
+func heartbeatHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(200)
 }
 
 func printUsage() {
