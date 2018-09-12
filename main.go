@@ -1,6 +1,7 @@
 package main
 
 import (
+	"compress/gzip"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -135,8 +136,13 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 
 	sort.Strings(names)
 
+	w.Header().Set("Content-Encoding", "gzip")
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(names)
+
+	zip := gzip.NewWriter(w)
+	defer zip.Close()
+
+	json.NewEncoder(zip).Encode(names)
 }
 
 func heartbeatHandler(w http.ResponseWriter, r *http.Request) {
