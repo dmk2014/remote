@@ -80,9 +80,9 @@ func readConfig(path string) {
 func startServer(host string, port int) {
 	address := host + ":" + strconv.Itoa(port)
 
-	http.HandleFunc("/run", httpGet(runHandler))
-	http.HandleFunc("/list", httpGet(listHandler))
-	http.HandleFunc("/heartbeat", httpGet(heartbeatHandler))
+	http.HandleFunc("/run", httpGet(httpCors(runHandler)))
+	http.HandleFunc("/list", httpGet(httpCors(listHandler)))
+	http.HandleFunc("/heartbeat", httpGet(httpCors(heartbeatHandler)))
 
 	log.Printf("Remote server listening at http://%s", address)
 	log.Fatal(http.ListenAndServe(address, nil))
@@ -96,6 +96,15 @@ func httpGet(h http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
+		h(w, r)
+	})
+}
+
+func httpCors(h http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Expect simple requests without OPTIONS preflight
+		// https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Simple_requests
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		h(w, r)
 	})
 }
