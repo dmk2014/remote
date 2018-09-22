@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"sort"
 	"strconv"
+	"time"
 )
 
 type Config struct {
@@ -155,7 +156,7 @@ func listHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func heartbeatHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(200)
+	fmt.Fprintf(w, "Server Time: %s", time.Now().Format("2006-01-02 15:04:05"))
 }
 
 func printUsage() {
