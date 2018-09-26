@@ -10,7 +10,7 @@ before_install:
 install: true
 
 script:
-  - gox -os="darwin windows" -arch="amd64" -output="remote.{{.OS}}.{{.Arch}}" -verbose
+  - gox -os="darwin windows" -arch="amd64" -output="dist/remote.{{.OS}}.{{.Arch}}" -verbose
 
 deploy:
   skip_cleanup: true
@@ -20,6 +20,7 @@ deploy:
     secure: EuFE0n9hfn6ds29WrH53KxQu0g816YHOl2WiQ7T0Tpo63XS92hJtgFjnn/3h6W6LC/vl8A1Cqx0Gahla137VcV9A0SP93NfAcQON76r/d0jucdT3hawb21tYN54FY3H/OamHv0mOncFEOVdTSPeLJPv8aVWt/nWR7id+BpmRz1jtIT4gYdNAuYZsnwU6siU9p383op8C8/vUBb5TdCTLFOyaITGPf0NIysuFDQb3iddrqStcVLWq3cKY+px2Isj1q2YgjV2QDpz2rg/BeHQ6KRRf8yBDVehFt28S6hteCL4xclzQFApkBUfcaqWtJB34WjoZ8LKDu/qQL2Yj/lF5VhWcXFx7L+YlkYeK7u60Sq9wCowZOVH9oVGXt+mdmxpO3kokPhIok/K7GN0nB3ykK05l9Hgzph8sIWlAQQJIakp3SztCgWH8wgl960eFhPKAM7TUClx/YSyGh+lXH3+4pHiuJtqundYydIvz3hpqVlqe3GZ57mxVFboIHlnfUVAiYK/KMZrD/osOcNcd0i4SqwvfxXSRbSGA/Idse3CxeP7kC7Xbiudn4rMauCrvU6bgerAP9cvKD9fZvf0AOSvCIElOZkXXuGCn9HTxerIAioXKq8WRGerr+6ckzxlXZPS0cWoyKtmmLaTszD9Eq+kVO6rDDc1Th5Jlu8weRA+qmwk=
   bucket: dmk2014-travis
   region: eu-west-1
+  local-dir: dist
   upload-dir: remote
   acl: private
 
